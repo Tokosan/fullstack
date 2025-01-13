@@ -5,6 +5,8 @@ function PersonForm({
   setNewName,
   setNewNumber,
   setPersons,
+  setNotification,
+  setError,
   persons,
   newName,
   newNumber,
@@ -25,6 +27,7 @@ function PersonForm({
         `${newName} already exists, do you want to change they number from\n${person.number}\nto\n${newNumber}\n?`
       );
       if (change) {
+        // This gets executed if the user decided to change the person number
         personService
           .update(person.id, { ...person, number: newNumber })
           .then((response) => {
@@ -35,6 +38,11 @@ function PersonForm({
                 person.id === id ? { ...person, number: newNumber } : person
               )
             );
+            setNotification(`The info about ${person.name} has been updated`);
+            setError(false);
+            setTimeout(() => {
+              setNotification("");
+            }, 1000);
           });
       }
       return;
@@ -43,9 +51,15 @@ function PersonForm({
       .create({ name: newName, number: newNumber })
       .then((response) => {
         console.log("<create>", response);
-        setPersons(persons.concat(response.data));
+        let person = response.data;
+        setPersons(persons.concat(person));
         setNewName("");
         setNewNumber("");
+        setNotification(`${person.name} has been added to the PhoneBook`);
+        setError(false);
+        setTimeout(() => {
+          setNotification("");
+        }, 1000);
       });
   };
 

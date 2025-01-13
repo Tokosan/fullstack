@@ -1,7 +1,7 @@
 import React from "react";
 import personService from "../services/persons";
 
-function Numbers({ search, persons, setPersons }) {
+function Numbers({ search, persons, setPersons, setNotification, setError }) {
   let personsToShow = [...persons];
   if (search !== "") {
     personsToShow = persons.filter(({ name }) =>
@@ -9,12 +9,26 @@ function Numbers({ search, persons, setPersons }) {
     );
   }
 
-  const handleDelete = (id) => {
+  const handleDelete = (person) => {
+    let id = person.id;
     console.log(`Removing person with id: ${id}`);
     personService
       .remove(id)
-      .then((response) => console.log("<handleDelete>", response))
-      .catch((error) => {})
+      .then((response) => {
+        console.log("<handleDelete>", response);
+        setNotification(`${person.name} deleted`);
+        setError(false);
+        setTimeout(() => {
+          setNotification("");
+        }, 1000);
+      })
+      .catch((error) => {
+        setNotification(`${person.name} was already deleted`);
+        setError(true);
+        setTimeout(() => {
+          setNotification("");
+        }, 1000);
+      })
       .then(setPersons(persons.filter((person) => person.id !== id)));
   };
 
@@ -27,7 +41,7 @@ function Numbers({ search, persons, setPersons }) {
             {person.name} {person.number}{" "}
             <button
               onClick={() => {
-                handleDelete(person.id);
+                handleDelete(person);
               }}
             >
               delete
