@@ -15,15 +15,7 @@ const App = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    personService.getAll().then((dbPersons) =>
-      setPersons(
-        dbPersons.concat({
-          id: "1234123",
-          name: "GHOST",
-          number: "123141231",
-        })
-      )
-    );
+    personService.getAll().then((dbPersons) => setPersons(dbPersons));
   }, []);
 
   return (
